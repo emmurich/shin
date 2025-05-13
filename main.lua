@@ -1628,17 +1628,13 @@ function pizzaFarmer()
 		end
 		if not target then
 			if not inFallbackMode then
-				print("[AutoFarm] No beacons found, going to fallback location sequence.");
 				inFallbackMode = true;
 				local distToFallback = (farmCfg.fallbackLocation - hrp.Position).Magnitude;
 				if (distToFallback > 5) then
-					print("[AutoFarm] Pathfinding to primary fallback:", farmCfg.fallbackLocation);
 					local successPrimary = walkPath(hum, hrp, farmCfg.fallbackLocation, false);
 					if (successPrimary and autoFarmEnabled) then
-						print("[AutoFarm] Arrived at primary fallback. Pathfinding to secondary fallback:", farmCfg.secondaryFallbackLocation);
 						local successSecondary = walkPath(hum, hrp, farmCfg.secondaryFallbackLocation, false);
 						if (successSecondary and autoFarmEnabled) then
-							print("[AutoFarm] Arrived at secondary fallback location. Pressing F and clicking Accept.");
 							VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.F, false, game);
 							task.wait(0.1);
 							VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.F, false, game);
@@ -1648,22 +1644,19 @@ function pizzaFarmer()
 								humanoid:MoveTo(farmCfg.fallbackLocation);
 							end
 						elseif autoFarmEnabled then
-							warn("[AutoFarm] Failed to reach secondary fallback location.");
+
 						end
 					elseif autoFarmEnabled then
-						warn("[AutoFarm] Failed to reach primary fallback location.");
+
 						inFallbackMode = false;
 					end
 				else
-					print("[AutoFarm] Close to primary fallback. Pathfinding directly to secondary fallback:", farmCfg.secondaryFallbackLocation);
 					local successSecondary = walkPath(hum, hrp, farmCfg.secondaryFallbackLocation, false);
 					if (successSecondary and autoFarmEnabled) then
-						print("[AutoFarm] Arrived at secondary fallback location from nearby. Pressing F and clicking Accept.");
 						safePizzaInteract();
 						task.wait(1);
-						print("[AutoFarm] Fallback sequence complete, waiting for beacons.");
 					elseif autoFarmEnabled then
-						warn("[AutoFarm] Failed to reach secondary fallback location from nearby.");
+
 					end
 				end
 			end
@@ -1680,62 +1673,50 @@ function pizzaFarmer()
 		end
 		if specialRoute then
 			if (specialRoute.type == "bridge") then
-				print("[AutoFarm] Detected 'bridge' special beacon route. Executing pre-routing sequence.");
 				local preRouteSuccess1 = walkPath(hum, hrp, specialRoute.manual, false);
 				if not autoFarmEnabled then
 					break;
 				end
 				if preRouteSuccess1 then
-					print("[AutoFarm] Reached special manual point. Moving to second point.");
 					hum:MoveTo(specialRoute.second);
 					local arrived = hum.MoveToFinished:Wait(3);
 					if not autoFarmEnabled then
 						break;
 					end
-					if arrived then
-						print("[AutoFarm] Reached second special point. Proceeding to beacon.");
-					else
-						warn("[AutoFarm] Timed out moving to second special point. Proceeding to beacon anyway.");
-					end
 				else
-					warn("[AutoFarm] Failed to reach special manual point. Skipping pre-routing.");
+
 				end
 			end
 		end
-		print("[AutoFarm] Moving directly to beacon basepart at:", dest);
 		local success = walkPath(hum, hrp, dest);
 		if not autoFarmEnabled then
 			break;
 		end
 		if success then
-			print("[AutoFarm] Successfully reached and interacted with beacon.");
 			target = nil;
 			task.wait(farmCfg.pauseMin + (math.random() * (farmCfg.pauseMax - farmCfg.pauseMin)));
 		else
-			warn("[AutoFarm] Failed to reach beacon directly. Checking for manual fallback.");
+
 			local manualPoint = getClosestManualPoint(dest);
 			if manualPoint then
-				print("[AutoFarm] Found close manual fallback point. Pathing to:", manualPoint);
 				local fallbackSuccess = walkPath(hum, hrp, manualPoint, false);
 				if not autoFarmEnabled then
 					break;
 				end
 				if fallbackSuccess then
-					print("[AutoFarm] Reached manual fallback point. Attempting interaction.");
 					VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.F, false, game);
 					task.wait(0.15);
 					VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.F, false, game);
 					task.wait(farmCfg.pauseMin + (math.random() * (farmCfg.pauseMax - farmCfg.pauseMin)));
 				else
-					warn("[AutoFarm] Failed to reach manual fallback point.");
+
 				end
 			else
-				warn("[AutoFarm] No suitable manual fallback point found.");
+
 			end
 			target = nil;
 		end
 	end
-	print("[AutoFarm] Loop ended.");
 	clearOldPath();
 	farmerCoroutine = nil;
 end
@@ -1746,10 +1727,10 @@ autoFarmToggle = createToggleButton("Pizza Delivery", autoFarmEnabled, function(
 		if farmerCoroutine then
 			task.cancel(farmerCoroutine);
 			farmerCoroutine = nil;
-			print("[AutoFarm] Disabled and stopped farmer coroutine.");
+
 		end
 	elseif not farmerCoroutine then
-		print("[AutoFarm] Enabled, starting farmer coroutine.");
+
 		farmerCoroutine = task.spawn(pizzaFarmer);
 	end
 end);
@@ -1757,7 +1738,7 @@ autoFarmToggle.LayoutOrder = 1;
 autoFarmToggle.Parent = autoFarmTabContent;
 weaponLabelsToggle = createToggleButton("Gun Labels", gunLabelsEnabled, function(state)
 	gunLabelsEnabled = state;
-	print("Gun Labels toggled:", gunLabelsEnabled);
+
 	if not gunLabelsEnabled then
 		for player, label in pairs(gunLabelsForPlayers) do
 			if label then
