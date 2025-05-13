@@ -2604,7 +2604,6 @@ local function spoofMoveDirection(humanoid, rootPart)
 	end;
 	mt.__moveDirPatched = true;
 	setreadonly(mt, true);
-	print(("[+] MoveDirection spoofed for %s"):format(humanoid.Parent.Name));
 end
 local function monitorEnemy(player)
 	if connections.characterAdded[player] then
